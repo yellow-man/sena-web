@@ -1,4 +1,8 @@
 logs
+files
+conf/key
+conf/application-production.conf
+conf/application-local-dev.conf
 project/project
 project/target
 target
@@ -11,5 +15,8 @@ dist
 /.idea_modules
 /.classpath
 /.project
+/.cache-main
+/.cache-tests
 /RUNNING_PID
 /.settings
+/bin/
