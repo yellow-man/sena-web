@@ -2,8 +2,8 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /                           yokohama.yellow_man.sena.controllers.Top.index()
+# Top page
+GET     /                           yokohama.yellow_man.sena.controllers.TopController.index()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /*file                      controllers.Assets.at(path="/public", file)
