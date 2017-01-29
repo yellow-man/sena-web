@@ -2,13 +2,16 @@ package yokohama.yellow_man.sena.controllers;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import play.mvc.Controller;
 import play.mvc.Result;
 import yokohama.yellow_man.common_tools.CheckUtils;
 import yokohama.yellow_man.common_tools.DateUtils;
+import yokohama.yellow_man.sena.components.db.IndicatorsComponent;
 import yokohama.yellow_man.sena.components.db.StocksComponent;
 import yokohama.yellow_man.sena.core.components.AppLogger;
+import yokohama.yellow_man.sena.core.models.Indicators;
 import yokohama.yellow_man.sena.core.models.Stocks;
 import yokohama.yellow_man.sena.pages.top.TopIndexPage;
 
@@ -28,7 +31,7 @@ public class TopController extends Controller {
 		// ページ情報初期化
 		TopIndexPage page = new TopIndexPage();
 
-		// 「銘柄」テーブルより基準日として登録されてる「取得日」の最大値を取得する。
+		// 「銘柄」テーブルより基準日として、登録されている「取得日」の最大値を取得する。
 		Date date = StocksComponent.getMaxDateCache();
 		AppLogger.info("銘柄「取得日」取得。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD));
 
@@ -42,6 +45,25 @@ public class TopController extends Controller {
 
 			page.stocks = stocksList;
 		}
+
+		// 「指標」テーブルより基準日として、登録されている「取得日」の最大値を取得する。
+		date = IndicatorsComponent.getMaxDateCache();
+		AppLogger.info("指標「取得日」取得。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD));
+
+		// 「取得日」より、全「指標」を取得する。
+		Map<Integer, Indicators> indicatorsMap = IndicatorsComponent.getIndicatorsMapByDateCache(date);
+		if (CheckUtils.isEmpty(indicatorsMap)) {
+			AppLogger.warn("指標マップが取得できませんでした。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD));
+		} else {
+			AppLogger.info("指標マップが取得できました。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD)
+							+ ", stocksList.size()=" + indicatorsMap.size());
+
+			page.indicatorsMap = indicatorsMap;
+		}
+
+		// 「信用残」テーブルより基準日として、登録されている「公開日」の最大値を取得する。
+
+		// 「公開日」より、全「指標」を取得する。
 
 		return ok(views.html.top.index.render(page));
 	}

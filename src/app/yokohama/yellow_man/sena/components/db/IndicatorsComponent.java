@@ -2,6 +2,7 @@ package yokohama.yellow_man.sena.components.db;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.avaje.ebean.Ebean;
 
@@ -10,27 +11,27 @@ import yokohama.yellow_man.common_tools.CheckUtils;
 import yokohama.yellow_man.common_tools.ClassUtils;
 import yokohama.yellow_man.common_tools.DateUtils;
 import yokohama.yellow_man.sena.core.definitions.AppConsts;
-import yokohama.yellow_man.sena.core.models.Stocks;
+import yokohama.yellow_man.sena.core.models.Indicators;
 
 /**
- * 銘柄（stocks）モデルの操作を行うコンポーネントクラス。
- * <p>共通コンポーネント{@link yokohama.yellow_man.sena.core.components.db.StocksComponent}を拡張する。
+ * 指標（indicators）モデルの操作を行うコンポーネントクラス。
+ * <p>共通コンポーネント{@link yokohama.yellow_man.sena.core.components.db.IndicatorsComponent}を拡張する。
  *
  * @author yellow-man
  * @since 1.0
- * @see yokohama.yellow_man.sena.core.components.db.StocksComponent
+ * @see yokohama.yellow_man.sena.core.components.db.IndicatorsComponent
  */
-public class StocksComponent extends yokohama.yellow_man.sena.core.components.db.StocksComponent {
+public class IndicatorsComponent extends yokohama.yellow_man.sena.core.components.db.IndicatorsComponent {
 
 	/**
-	 * 銘柄（stocks）情報取得日の最大値を返す。（※キャッシュ：1時間）
+	 * 指標（indicators）情報取得日の最大値を返す。（※キャッシュ：1時間）
 	 *
 	 * @return 取得日の最大値
 	 * @since 1.0
 	 */
 	public static Date getMaxDateCache() {
 		// キャッシュキー
-		String cacheKey = StocksComponent.class.getName() + ":" + ClassUtils.getMethodName();
+		String cacheKey = IndicatorsComponent.class.getName() + ":" + ClassUtils.getMethodName();
 
 		Object cache = null;
 		if ((cache = Cache.get(cacheKey)) != null) {
@@ -38,8 +39,8 @@ public class StocksComponent extends yokohama.yellow_man.sena.core.components.db
 			return (Date) cache;
 		}
 
-		List<Stocks> retList =
-				Ebean.find(Stocks.class)
+		List<Indicators> retList =
+				Ebean.find(Indicators.class)
 					.where()
 					.eq("delete_flg", false)
 					.orderBy("id DESC")
@@ -64,30 +65,30 @@ public class StocksComponent extends yokohama.yellow_man.sena.core.components.db
 
 	/**
 	 * 検索条件に取得日（{@code date}）を指定し、
-	 * 未削除の銘柄（stocks）情報一覧を返す。（※キャッシュ：1時間）
+	 * 未削除の指標（indicators）情報一覧をマップで返す。（※キャッシュ：1時間）
 	 *
 	 * @param date 取得日
-	 * @return 未削除の銘柄（stocks）情報一覧
+	 * @return 未削除の指標（indicators）情報一覧 Map<銘柄コード, 指標>
 	 * @since 1.0
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<Stocks> getStocksListByDateCache(Date date) {
+	public static Map<Integer, Indicators> getIndicatorsMapByDateCache(Date date) {
 		// キャッシュキー
-		String cacheKey = StocksComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + date;
+		String cacheKey = IndicatorsComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + date;
 
 		Object cache = null;
 		if ((cache = Cache.get(cacheKey)) != null) {
 			// キャッシュが存在する場合は、キャッシュからデータを取得する。
-			return (List<Stocks>) cache;
+			return (Map<Integer, Indicators>) cache;
 		}
 
-		List<Stocks> retList =
-				yokohama.yellow_man.sena.core.components.db.StocksComponent.getStocksListByDate(date);
+		Map<Integer, Indicators> retMap =
+				yokohama.yellow_man.sena.core.components.db.IndicatorsComponent.getIndicatorsMapByDate(date);
 
 		// 取得データをキャッシュに保持
-		if (retList != null) {
-			Cache.set(cacheKey, retList, AppConsts.CACHE_TIME_LONG);
+		if (retMap != null) {
+			Cache.set(cacheKey, retMap, AppConsts.CACHE_TIME_LONG);
 		}
-		return retList;
+		return retMap;
 	}
 }

@@ -50,11 +50,11 @@
                                             <th>市場名</th>
 
                                             <th>配当利回り</th>
-                                            <th>株価収益率</th>
-                                            <th>株価純資産倍率</th>
-                                            <th>1株利益</th>
-                                            <th>1株当たり純資産</th>
-                                            <th>株主資本利益率</th>
+                                            <th>株価収益率（PER）</th>
+                                            <th>株価純資産倍率（PBR）</th>
+                                            <th>1株利益（EPS）</th>
+                                            <th>1株当たり純資産（BPS）</th>
+                                            <th>株主資本利益率（ROE）</th>
                                             <th>自己資本比率</th>
 
                                             <th>信用残公表日</th>
@@ -69,13 +69,13 @@
                                             <td>@stocks.stockCode @stocks.stockName</td>
                                             <td align="center">@stocks.market</td>
 
-                                            <td align="right">0.94</td>
-                                            <td align="right">37.89</td>
-                                            <td align="right">5.33</td>
-                                            <td align="right">980.71</td>
-                                            <td align="right">6967.28</td>
-                                            <td align="right">14.06</td>
-                                            <td align="right">46.40</td>
+                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).dividendYield}</td>
+                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).priceEarningsRatio}</td>
+                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).priceBookValueRatio}</td>
+                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).earningsPerShare}</td>
+                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).bookValuePerShare}</td>
+                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).returnOnEquity}</td>
+                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).capitalRatio}</td>
 
                                             <td align="center">2017-01-20</td>
                                             <td align="right">202,600</td>
