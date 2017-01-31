@@ -41,9 +41,9 @@
                                 <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables">
                                     <thead>
                                         <tr>
-                                            <th colspan="2">銘柄情報</th>
-                                            <th colspan="7">指標情報</th>
-                                            <th colspan="4">信用情報</th>
+                                            <th colspan="2">銘柄情報（取得日：@topIndexPage.stocksDateStr）</th>
+                                            <th colspan="7">指標情報（取得日：@topIndexPage.indicatorsDateStr）</th>
+                                            <th colspan="4">信用情報（公表日：@topIndexPage.debitBalancesReleaseDateStr）</th>
                                         </tr>
                                         <tr>
                                             <th>銘柄（コード）</th>
@@ -57,7 +57,6 @@
                                             <th>株主資本利益率（ROE）</th>
                                             <th>自己資本比率</th>
 
-                                            <th>信用残公表日</th>
                                             <th>信用売残</th>
                                             <th>信用買残</th>
                                             <th>信用倍率</th>
@@ -77,10 +76,9 @@
                                             <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).returnOnEquity}</td>
                                             <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).capitalRatio}</td>
 
-                                            <td align="center">2017-01-20</td>
-                                            <td align="right">202,600</td>
-                                            <td align="right">495,200</td>
-                                            <td align="right">2.44</td>
+                                            <td align="right">@if(topIndexPage.debitBalancesMap.get(stocks.stockCode) != null){@topIndexPage.debitBalancesMap.get(stocks.stockCode).marginSellingBalance}</td>
+                                            <td align="right">@if(topIndexPage.debitBalancesMap.get(stocks.stockCode) != null){@topIndexPage.debitBalancesMap.get(stocks.stockCode).marginDebtBalance}</td>
+                                            <td align="right">@if(topIndexPage.debitBalancesMap.get(stocks.stockCode) != null){@topIndexPage.debitBalancesMap.get(stocks.stockCode).ratioMarginBalance}</td>
                                         </tr>
                                         }
                                     </tbody>
