@@ -15,3 +15,7 @@ libraryDependencies ++= Seq(
   javaWs,
   "org.json" % "json" % "20160212"
 )
+
+TwirlKeys.templateImports ++= Seq(
+  "yokohama.yellow_man.sena.views.helper.AppHelper"
+)

@@ -92,22 +92,22 @@
                                                 @* 1株利益（EPS） *@
                                                 <td align="right">
                                                     @if(indicators != null && indicators.earningsPerShare != null){
-                                                        @* TODO カンマ、少数点 *@
-                                                        @indicators.earningsPerShare
+                                                        @* カンマ、少数点、マイナス *@
+                                                        @AppHelper.format(indicators.earningsPerShare, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT)
                                                     }
                                                 </td>
                                                 @* 1株当たり純資産（BPS） *@
                                                 <td align="right">
                                                     @if(indicators != null && indicators.bookValuePerShare != null){
-                                                        @* TODO カンマ、少数点 *@
-                                                        @indicators.bookValuePerShare
+                                                        @* カンマ、少数点、マイナス *@
+                                                        @AppHelper.format(indicators.bookValuePerShare, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT)
                                                     }
                                                 </td>
                                                 @* 株主資本利益率（ROE） *@
                                                 <td align="right">
                                                     @if(indicators != null && indicators.returnOnEquity != null){
-                                                        @* TODO カンマ、少数点 *@
-                                                        @indicators.returnOnEquity.setScale(2, scala.math.BigDecimal.RoundingMode.HALF_UP)
+                                                        @* カンマ、少数点 *@
+                                                        @AppHelper.format(indicators.returnOnEquity, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT)
                                                     }
                                                 </td>
                                                 @* 自己資本比率 *@
@@ -122,22 +122,22 @@
                                                 @* 信用売残 *@
                                                 <td align="right">
                                                     @if(debitBalances != null && debitBalances.marginSellingBalance != null){
-                                                        @* TODO カンマ *@
-                                                        @debitBalances.marginSellingBalance
+                                                        @* カンマ *@
+                                                        @AppHelper.format(debitBalances.marginSellingBalance, AppHelper.NUM_FORMAT_ASIGN_COMMA)
                                                     }
                                                 </td>
                                                 @* 信用買残 *@
                                                 <td align="right">
                                                     @if(debitBalances != null && debitBalances.marginDebtBalance != null){
-                                                        @* TODO カンマ *@
-                                                        @debitBalances.marginDebtBalance
+                                                        @* カンマ *@
+                                                        @AppHelper.format(debitBalances.marginDebtBalance, AppHelper.NUM_FORMAT_ASIGN_COMMA)
                                                     }
                                                 </td>
                                                 @* 信用倍率 *@
                                                 <td align="right">
                                                     @if(debitBalances != null && debitBalances.ratioMarginBalance != null){
-                                                        @* TODO カンマ、少数点 *@
-                                                        @debitBalances.ratioMarginBalance 倍
+                                                        @* カンマ、少数点 *@
+                                                        @AppHelper.format(debitBalances.ratioMarginBalance, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) 倍
                                                     }
                                                 </td>
                                             }
