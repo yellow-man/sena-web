@@ -65,20 +65,82 @@
                                     <tbody>
                                         @for(stocks <- topIndexPage.stocks){
                                         <tr>
+                                            @* 銘柄（コード） *@
                                             <td>@stocks.stockCode @stocks.stockName</td>
+                                            @* 市場名 *@
                                             <td align="center">@stocks.market</td>
 
-                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).dividendYield}</td>
-                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).priceEarningsRatio}</td>
-                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).priceBookValueRatio}</td>
-                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).earningsPerShare}</td>
-                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).bookValuePerShare}</td>
-                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).returnOnEquity}</td>
-                                            <td align="right">@if(topIndexPage.indicatorsMap.get(stocks.stockCode) != null){@topIndexPage.indicatorsMap.get(stocks.stockCode).capitalRatio}</td>
+                                            @defining(topIndexPage.indicatorsMap.get(stocks.stockCode)){ indicators =>
+                                                @* 配当利回り *@
+                                                <td align="right">
+                                                    @if(indicators != null && indicators.dividendYield != null){
+                                                        @indicators.dividendYield %
+                                                    }
+                                                </td>
+                                                @* 株価収益率（PER） *@
+                                                <td align="right">
+                                                    @if(indicators != null && indicators.priceEarningsRatio != null){
+                                                        @indicators.priceEarningsRatio 倍
+                                                    }
+                                                </td>
+                                                @* 株価純資産倍率（PBR） *@
+                                                <td align="right">
+                                                    @if(indicators != null && indicators.priceBookValueRatio != null){
+                                                        @indicators.priceBookValueRatio 倍
+                                                    }
+                                                </td>
+                                                @* 1株利益（EPS） *@
+                                                <td align="right">
+                                                    @if(indicators != null && indicators.earningsPerShare != null){
+                                                        @* TODO カンマ、少数点 *@
+                                                        @indicators.earningsPerShare
+                                                    }
+                                                </td>
+                                                @* 1株当たり純資産（BPS） *@
+                                                <td align="right">
+                                                    @if(indicators != null && indicators.bookValuePerShare != null){
+                                                        @* TODO カンマ、少数点 *@
+                                                        @indicators.bookValuePerShare
+                                                    }
+                                                </td>
+                                                @* 株主資本利益率（ROE） *@
+                                                <td align="right">
+                                                    @if(indicators != null && indicators.returnOnEquity != null){
+                                                        @* TODO カンマ、少数点 *@
+                                                        @indicators.returnOnEquity.setScale(2, scala.math.BigDecimal.RoundingMode.HALF_UP)
+                                                    }
+                                                </td>
+                                                @* 自己資本比率 *@
+                                                <td align="right">
+                                                    @if(indicators != null){
+                                                        @indicators.capitalRatio
+                                                    }
+                                                </td>
+                                            }
 
-                                            <td align="right">@if(topIndexPage.debitBalancesMap.get(stocks.stockCode) != null){@topIndexPage.debitBalancesMap.get(stocks.stockCode).marginSellingBalance}</td>
-                                            <td align="right">@if(topIndexPage.debitBalancesMap.get(stocks.stockCode) != null){@topIndexPage.debitBalancesMap.get(stocks.stockCode).marginDebtBalance}</td>
-                                            <td align="right">@if(topIndexPage.debitBalancesMap.get(stocks.stockCode) != null){@topIndexPage.debitBalancesMap.get(stocks.stockCode).ratioMarginBalance}</td>
+                                            @defining(topIndexPage.debitBalancesMap.get(stocks.stockCode)){ debitBalances =>
+                                                @* 信用売残 *@
+                                                <td align="right">
+                                                    @if(debitBalances != null && debitBalances.marginSellingBalance != null){
+                                                        @* TODO カンマ *@
+                                                        @debitBalances.marginSellingBalance
+                                                    }
+                                                </td>
+                                                @* 信用買残 *@
+                                                <td align="right">
+                                                    @if(debitBalances != null && debitBalances.marginDebtBalance != null){
+                                                        @* TODO カンマ *@
+                                                        @debitBalances.marginDebtBalance
+                                                    }
+                                                </td>
+                                                @* 信用倍率 *@
+                                                <td align="right">
+                                                    @if(debitBalances != null && debitBalances.ratioMarginBalance != null){
+                                                        @* TODO カンマ、少数点 *@
+                                                        @debitBalances.ratioMarginBalance 倍
+                                                    }
+                                                </td>
+                                            }
                                         </tr>
                                         }
                                     </tbody>

@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import play.mvc.Controller;
 import play.mvc.Result;
 import yokohama.yellow_man.common_tools.CheckUtils;
 import yokohama.yellow_man.common_tools.DateUtils;
@@ -23,7 +22,7 @@ import yokohama.yellow_man.sena.pages.top.TopIndexPage;
  * @author yellow-man
  * @since 1.0
  */
-public class TopController extends Controller {
+public class TopController extends AppWebController {
 
 	/**
 	 * Topページアクション。
