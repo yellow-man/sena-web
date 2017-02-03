@@ -35,12 +35,6 @@
 		</filter>
 	</appender>
 
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>[%date{yyyy-MM-dd HH:mm:ss:SSS}] [%level] [%.5thread] [%logger] [%X{fileline}] [%msg] %xEx%n</pattern>
-		</encoder>
-	</appender>
-
 	<logger name="play" level="INFO" />
 	<logger name="application" level="DEBUG" />
 
