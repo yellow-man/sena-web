@@ -18,7 +18,7 @@ import yokohama.yellow_man.sena.core.models.Indicators;
  * <p>共通コンポーネント{@link yokohama.yellow_man.sena.core.components.db.IndicatorsComponent}を拡張する。
  *
  * @author yellow-man
- * @since 1.0
+ * @since 1.0.0-1.0
  * @see yokohama.yellow_man.sena.core.components.db.IndicatorsComponent
  */
 public class IndicatorsComponent extends yokohama.yellow_man.sena.core.components.db.IndicatorsComponent {
@@ -27,7 +27,7 @@ public class IndicatorsComponent extends yokohama.yellow_man.sena.core.component
 	 * 指標（indicators）情報取得日の最大値を返す。（※キャッシュ：1時間）
 	 *
 	 * @return 取得日の最大値
-	 * @since 1.0
+	 * @since 1.0.0-1.0
 	 */
 	public static Date getMaxDateCache() {
 		// キャッシュキー
@@ -68,8 +68,8 @@ public class IndicatorsComponent extends yokohama.yellow_man.sena.core.component
 	 * 未削除の指標（indicators）情報一覧をマップで返す。（※キャッシュ：1時間）
 	 *
 	 * @param date 取得日
-	 * @return 未削除の指標（indicators）情報一覧 Map<銘柄コード, 指標>
-	 * @since 1.0
+	 * @return 未削除の指標（indicators）情報一覧 Map＜銘柄コード, 指標＞
+	 * @since 1.0.0-1.0
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<Integer, Indicators> getIndicatorsMapByDateCache(Date date) {

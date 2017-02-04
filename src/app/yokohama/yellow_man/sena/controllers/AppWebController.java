@@ -9,7 +9,7 @@ import yokohama.yellow_man.sena.annotations.PerformanceCheck;
  * <p>Webを実装する場合、このクラスを継承する。
  *
  * @author yellow-man
- * @since 1.0
+ * @since 1.0.0-1.0
  */
 @PerformanceCheck
 @ParamsTrace

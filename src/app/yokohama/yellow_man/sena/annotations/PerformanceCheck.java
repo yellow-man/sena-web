@@ -11,8 +11,8 @@ import yokohama.yellow_man.sena.annotations.action.PerformanceCheckAction;
 /**
  * パフォーマンスチェック中継処理 アノテーション定義。
  * @author yellow-man
- * @since 1.1
- * @see UsersTraceAction
+ * @since 1.0.0-1.0
+ * @see PerformanceCheckAction
  */
 @With(PerformanceCheckAction.class)
 @Target({ElementType.TYPE, ElementType.METHOD})

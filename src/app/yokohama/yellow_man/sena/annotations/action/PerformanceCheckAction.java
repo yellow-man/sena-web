@@ -12,7 +12,7 @@ import yokohama.yellow_man.sena.core.components.AppLogger;
  * パフォーマンスチェック 中継処理クラス。
  * <p>アクション実行前と実行後の時間をログに出力する中継処理
  * @author yellow-man
- * @since 1.1
+ * @since 1.0.0-1.0
  */
 public class PerformanceCheckAction extends Action<PerformanceCheckAction> {
 

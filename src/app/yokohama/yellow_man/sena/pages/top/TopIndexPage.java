@@ -13,7 +13,7 @@ import yokohama.yellow_man.sena.pages.AppPage;
  * Topページ情報保持クラス。
  *
  * @author yellow-man
- * @since 1.0
+ * @since 1.0.0-1.0
  */
 @SuppressWarnings("serial")
 public class TopIndexPage extends AppPage implements Serializable {
@@ -23,12 +23,12 @@ public class TopIndexPage extends AppPage implements Serializable {
 	/** 銘柄リスト：取得日 */
 	public String stocksDateStr;
 
-	/** 指標マップ <銘柄コード, 指標> */
+	/** 指標マップ ＜銘柄コード, 指標＞ */
 	public Map<Integer, Indicators> indicatorsMap;
 	/** 指標マップ：取得日 */
 	public String indicatorsDateStr;
 
-	/** 信用残マップ <銘柄コード, 信用残> */
+	/** 信用残マップ ＜銘柄コード, 信用残＞ */
 	public Map<Integer, DebitBalances> debitBalancesMap;
 	/** 銘柄リスト：公表日 */
 	public String debitBalancesReleaseDateStr;

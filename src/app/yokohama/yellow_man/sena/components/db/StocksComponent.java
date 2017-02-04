@@ -17,7 +17,7 @@ import yokohama.yellow_man.sena.core.models.Stocks;
  * <p>共通コンポーネント{@link yokohama.yellow_man.sena.core.components.db.StocksComponent}を拡張する。
  *
  * @author yellow-man
- * @since 1.0
+ * @since 1.0.0-1.0
  * @see yokohama.yellow_man.sena.core.components.db.StocksComponent
  */
 public class StocksComponent extends yokohama.yellow_man.sena.core.components.db.StocksComponent {
@@ -26,7 +26,7 @@ public class StocksComponent extends yokohama.yellow_man.sena.core.components.db
 	 * 銘柄（stocks）情報取得日の最大値を返す。（※キャッシュ：1時間）
 	 *
 	 * @return 取得日の最大値
-	 * @since 1.0
+	 * @since 1.0.0-1.0
 	 */
 	public static Date getMaxDateCache() {
 		// キャッシュキー
@@ -68,7 +68,7 @@ public class StocksComponent extends yokohama.yellow_man.sena.core.components.db
 	 *
 	 * @param date 取得日
 	 * @return 未削除の銘柄（stocks）情報一覧
-	 * @since 1.0
+	 * @since 1.0.0-1.0
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Stocks> getStocksListByDateCache(Date date) {

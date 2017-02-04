@@ -11,7 +11,7 @@ import yokohama.yellow_man.sena.annotations.action.ParamsTraceAction;
 /**
  * リクエスト、レスポンスパラメータのトレース中継処理 アノテーション定義。
  * @author yellow-man
- * @since 1.1
+ * @since 1.0.0-1.0
  * @see ParamsTraceAction
  */
 @With(ParamsTraceAction.class)

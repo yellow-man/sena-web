@@ -18,7 +18,7 @@ import yokohama.yellow_man.sena.core.models.DebitBalances;
  * <p>共通コンポーネント{@link yokohama.yellow_man.sena.core.components.db.DebitBalancesComponent}を拡張する。
  *
  * @author yellow-man
- * @since 1.0
+ * @since 1.0.0-1.0
  * @see yokohama.yellow_man.sena.core.components.db.DebitBalancesComponent
  */
 public class DebitBalancesComponent extends yokohama.yellow_man.sena.core.components.db.DebitBalancesComponent {
@@ -27,7 +27,7 @@ public class DebitBalancesComponent extends yokohama.yellow_man.sena.core.compon
 	 * 信用残（debit_balances）情報公開日の最大値を返す。（※キャッシュ：1時間）
 	 *
 	 * @return 公開日の最大値
-	 * @since 1.0
+	 * @since 1.0.0-1.0
 	 */
 	public static Date getMaxReleaseDateCache() {
 		// キャッシュキー
@@ -68,8 +68,8 @@ public class DebitBalancesComponent extends yokohama.yellow_man.sena.core.compon
 	 * 未削除の信用残（debit_balances）情報一覧をマップで返す。（※キャッシュ：1時間）
 	 *
 	 * @param releaseDate 公表日
-	 * @return 未削除の信用残（debit_balances）情報一覧 Map<銘柄コード, 信用残>
-	 * @since 1.0
+	 * @return 未削除の信用残（debit_balances）情報一覧 Map＜銘柄コード, 信用残＞
+	 * @since 1.0.0-1.0
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<Integer, DebitBalances> getDebitBalancesMapByDateCache(Date releaseDate) {

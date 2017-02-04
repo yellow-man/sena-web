@@ -7,14 +7,14 @@ import java.text.DecimalFormat;
  * Viewで共通に利用するヘルパークラス。
  *
  * @author yellow-man
- * @since 1.0
+ * @since 1.0.0-1.0
  */
 @SuppressWarnings("serial")
 public class AppHelper implements Serializable {
 
-	/** フォーマット：数値「{@code #,###;-#,###}」 */
+	/** フォーマット：数値「{@code #,###}」 */
 	public static final String NUM_FORMAT_ASIGN_COMMA = "#,###";
-	/** フォーマット：数値「{@code #,###.00;-#,###.00}」 */
+	/** フォーマット：数値「{@code #,##0.00}」 */
 	public static final String NUM_FORMAT_ASIGN_COMMA_POINT = "#,##0.00";
 
 	/**
@@ -22,6 +22,7 @@ public class AppHelper implements Serializable {
 	 * @param number 数値
 	 * @param format フォーマット
 	 * @return {@code format}に変換された値。
+	 * @since 1.0.0-1.0
 	 */
 	public static String format(Number number, String format) {
 		DecimalFormat df = new DecimalFormat(format);

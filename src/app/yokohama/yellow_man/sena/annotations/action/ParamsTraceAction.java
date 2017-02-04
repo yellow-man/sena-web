@@ -15,7 +15,7 @@ import yokohama.yellow_man.sena.core.components.RequestUtilityComponent;
 /**
  * リクエスト、レスポンスパラメータのトレース中継処理クラス。
  * @author yellow-man
- * @since 1.1
+ * @since 1.0.0-1.0
  */
 public class ParamsTraceAction extends Action<ParamsTraceAction> {
 

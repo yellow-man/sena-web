@@ -20,13 +20,14 @@ import yokohama.yellow_man.sena.pages.top.TopIndexPage;
  * Topページコントローラ。
  *
  * @author yellow-man
- * @since 1.0
+ * @since 1.0.0-1.0
  */
 public class TopController extends AppWebController {
 
 	/**
 	 * Topページアクション。
-	 * @return
+	 * @return Result
+	 * @since 1.0.0-1.0
 	 */
 	public static Result index() {
 		// ページ情報初期化
