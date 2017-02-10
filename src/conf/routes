@@ -3,7 +3,10 @@
 # ~~~~
 
 # Top page
-GET     /                           yokohama.yellow_man.sena.controllers.TopController.index()
+GET      /                                           yokohama.yellow_man.sena.controllers.TopController.index()
+
+GET      /1.1.0-1.1/api/getStocksWithInfoList.json   yokohama.yellow_man.sena.api.controllers.StocksController.getStocksWithInfoList()
+POST     /1.1.0-1.1/api/getStocksWithInfoList.json   yokohama.yellow_man.sena.api.controllers.StocksController.getStocksWithInfoList()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /*file                      controllers.Assets.at(path="/public", file)
