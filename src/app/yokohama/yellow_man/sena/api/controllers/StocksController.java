@@ -8,6 +8,7 @@ import java.util.Map;
 import play.data.Form;
 import play.mvc.Result;
 import yokohama.yellow_man.sena.api.response.ApiResult;
+import yokohama.yellow_man.sena.core.components.AppLogger;
 
 /**
  * 銘柄APIコントローラークラス。
@@ -28,7 +29,23 @@ public class StocksController extends AppWebApiController {
 
 		int draw = 1;
 		if (dataParams.draw != null) {
-			draw = Integer.parseInt(dataParams.draw) + 1;
+			draw = dataParams.draw + 1;
+		}
+
+		for (Map.Entry<String, String> entry : dataParams.search.entrySet()) {
+			AppLogger.info(entry.getKey() + ":" + entry.getValue());
+		}
+
+		for (Map<String, String> orderMap : dataParams.order) {
+			for (Map.Entry<String, String> entry : orderMap.entrySet()) {
+				AppLogger.info(entry.getKey() + ":" + entry.getValue());
+			}
+		}
+
+		for (Map<String, String> columnsMap : dataParams.columns) {
+			for (Map.Entry<String, String> entry : columnsMap.entrySet()) {
+				AppLogger.info(entry.getKey() + ":" + entry.getValue());
+			}
 		}
 
 		// データ
@@ -62,13 +79,11 @@ public class StocksController extends AppWebApiController {
 	}
 
 	public static class DataParams {
-		public String draw;
-// TODO 文字列のキー"columns[8][search][regex]"のような形式で入ってくるためマッピング方法がわからない。。リフレクション使ってマッピングするか？
-//		public List<Map<String, Object>> columns;
-//
-//		public static class Columns {
-//			String name;
-//			Map<String, String> search;
-//		}
+		public Integer draw;
+		public Integer start;
+		public Integer length;
+		public Map<String, String> search;
+		public List<Map<String, String>> order;
+		public List<Map<String, String>> columns;
 	}
 }
