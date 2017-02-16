@@ -83,7 +83,6 @@
                                             <th>株主資本利益率</th>
                                             <th>自己資本比率</th>
 
-                                            <th>信用残公表日</th>
                                             <th>信用売残</th>
                                             <th>信用買残</th>
                                             <th>信用倍率</th>
@@ -159,26 +158,23 @@
             "serverSide": true,
             "ajax": {
                 "url": "/1.1.0-1.1/api/getStocksWithInfoList.json",
-                "type": "POST",
-                "dataType": "json",
                 "data": function(data) {
                     planify(data);
                 }
             },
             "columns": [
-                { "data": "first_name" },
-                { "data": "last_name" },
-                { "data": "position" },
-                { "data": "office" },
-                { "data": "start_date" },
-                { "data": "salary" },
-                { "data": "2first_name" },
-                { "data": "2last_name" },
-                { "data": "2position" },
-                { "data": "2office" },
-                { "data": "2start_date" },
-                { "data": "2salary" },
-                { "data": "2first_name" }
+                { "data": "stockCodeName" },
+                { "data": "market" },
+                { "data": "dividendYield" },
+                { "data": "priceEarningsRatio" },
+                { "data": "priceBookValueRatio" },
+                { "data": "earningsPerShare" },
+                { "data": "bookValuePerShare" },
+                { "data": "returnOnEquity" },
+                { "data": "capitalRatio" },
+                { "data": "marginSellingBalance" },
+                { "data": "marginDebtBalance" },
+                { "data": "ratioMarginBalance" }
             ]
         });
     });

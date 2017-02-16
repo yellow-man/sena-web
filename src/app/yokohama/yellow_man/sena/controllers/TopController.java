@@ -70,7 +70,7 @@ public class TopController extends AppWebController {
 		AppLogger.info("信用残「公表日」取得。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD));
 		page.debitBalancesReleaseDateStr = DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD);
 
-		// 「公表日」より、全「指標」を取得する。
+		// 「公表日」より、全「信用残」を取得する。
 		Map<Integer, DebitBalances> debitBalancesMap = DebitBalancesComponent.getDebitBalancesMapByDateCache(date);
 		if (CheckUtils.isEmpty(debitBalancesMap)) {
 			AppLogger.warn("信用残マップが取得できませんでした。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD));
