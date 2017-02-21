@@ -20,6 +20,7 @@ import yokohama.yellow_man.sena.core.components.AppLogger;
 import yokohama.yellow_man.sena.core.models.DebitBalances;
 import yokohama.yellow_man.sena.core.models.Indicators;
 import yokohama.yellow_man.sena.core.models.Stocks;
+import yokohama.yellow_man.sena.views.helper.AppHelper;
 
 /**
  * 銘柄APIコントローラークラス。
@@ -89,7 +90,7 @@ public class StocksController extends AppWebApiController {
 		AppLogger.info("表示対象の総数取得。：recordsTotal=" + recordsTotal);
 
 		// フィルタリング後の表示対象総数を取得する。
-		int recordsFiltered = StocksComponent.getStocksFilterCountByDateCache(date, dataParams);
+		Integer recordsFiltered = StocksComponent.getStocksFilterCountByDateCache(date, dataParams);
 		AppLogger.info("フィルタリング後の表示対象総数取得。：recordsFiltered=" + recordsFiltered);
 
 		// 返却データ。
@@ -136,27 +137,39 @@ public class StocksController extends AppWebApiController {
 			for (Stocks stocks : stocksList) {
 				StocksWithInfo data = new StocksWithInfo();
 				Integer stockCode = stocks.stockCode;
+				// 銘柄（コード）
 				data.stockCodeName        = stockCode + " " + stocks.stockName;
+				// 市場名
 				data.market               = stocks.market;
 
 				// 該当の「指標」データを取得
 				Indicators indicators = indicatorsMap.get(stockCode);
 				if (indicators != null) {
-					data.dividendYield        = indicators.dividendYield.toString();
-					data.priceEarningsRatio   = indicators.priceEarningsRatio.toString();
-					data.priceBookValueRatio  = indicators.priceBookValueRatio.toString();
-					data.earningsPerShare     = indicators.earningsPerShare.toString();
-					data.bookValuePerShare    = indicators.bookValuePerShare.toString();
-					data.returnOnEquity       = indicators.returnOnEquity.toString();
-					data.capitalRatio         = indicators.capitalRatio.toString();
+					// 配当利回り
+					data.dividendYield        = (indicators.dividendYield != null)       ? indicators.dividendYield.toString() + " %"        : "";
+					// 株価収益率（PER）
+					data.priceEarningsRatio   = (indicators.priceEarningsRatio != null)  ? indicators.priceEarningsRatio.toString() + " 倍"  : "";
+					// 株価純資産倍率（PBR）
+					data.priceBookValueRatio  = (indicators.priceBookValueRatio != null) ? indicators.priceBookValueRatio.toString() + " 倍" : "";
+					// 1株利益（EPS）
+					data.earningsPerShare     = (indicators.earningsPerShare != null)    ? AppHelper.format(indicators.earningsPerShare,  AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
+					// 1株当たり純資産（BPS）
+					data.bookValuePerShare    = (indicators.bookValuePerShare != null)   ? AppHelper.format(indicators.bookValuePerShare, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
+					// 株主資本利益率（ROE）
+					data.returnOnEquity       = (indicators.returnOnEquity != null)      ? AppHelper.format(indicators.returnOnEquity,    AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
+					// 自己資本比率
+					data.capitalRatio         = (indicators.capitalRatio != null)        ? indicators.capitalRatio.toString() + " %"         : "";
 				}
 
 				// 該当の「信用残」データを取得
 				DebitBalances debitBalances = debitBalancesMap.get(stockCode);
 				if (debitBalances != null) {
-					data.marginSellingBalance = debitBalances.marginSellingBalance.toString();
-					data.marginDebtBalance    = debitBalances.marginDebtBalance.toString();
-					data.ratioMarginBalance   = debitBalances.ratioMarginBalance.toString();
+					// 信用売残
+					data.marginSellingBalance = (debitBalances.marginSellingBalance != null) ? AppHelper.format(debitBalances.marginSellingBalance, AppHelper.NUM_FORMAT_ASIGN_COMMA)       : "";
+					// 信用買残
+					data.marginDebtBalance    = (debitBalances.marginDebtBalance != null)    ? AppHelper.format(debitBalances.marginDebtBalance,    AppHelper.NUM_FORMAT_ASIGN_COMMA)       : "";
+					// 信用倍率
+					data.ratioMarginBalance   = (debitBalances.ratioMarginBalance != null)   ? AppHelper.format(debitBalances.ratioMarginBalance,   AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
 				}
 				dataList.add(data);
 			}

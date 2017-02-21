@@ -12,6 +12,9 @@ import java.util.Map;
  */
 public class DataTablesParams extends AppParams {
 
+	/** マップキー：search[value] */
+	public static final String MAP_KEY_SEARCH_VALUE = "value";
+
 	/**
 	 * ※翻訳サイト参照：カウンターを描く。
 	 * <p>これは、DataTableによって使用され、サーバー側の処理要求からのAjax戻り値がDataTableによって順番に引き出されるようにします（Ajax要求は非同期であり、順序が乱れることがあります）。これはdraw returnパラメータの一部として使用されます。
