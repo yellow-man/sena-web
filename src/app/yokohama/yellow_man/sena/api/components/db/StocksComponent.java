@@ -4,12 +4,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.SqlRow;
 
 import play.cache.Cache;
+import yokohama.yellow_man.common_tools.CheckUtils;
 import yokohama.yellow_man.sena.api.params.DataTablesParams;
+import yokohama.yellow_man.sena.core.components.AppLogger;
 import yokohama.yellow_man.sena.core.definitions.AppConsts;
 import yokohama.yellow_man.sena.core.models.Stocks;
 
@@ -93,6 +96,7 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 	}
 
 	/**
+	 * TODO yellow-man JOINしないと並び順は対応できない。
 	 * 検索条件に取得日（{@code date}）とDataTablesパラメータ（{@code params}）を指定し、
 	 * 未削除の銘柄（stocks）情報一覧を返す。（※キャッシュ：1時間）
 	 *
@@ -121,10 +125,43 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 			page = params.start / limit;
 		}
 
+		// 並び順
+		StringBuilder order = new StringBuilder();
+		if (!CheckUtils.isEmpty(params.order)) {
+			for (Map<String, String> orderMap : params.order) {
+				// 必要なキーが存在しているかチェック
+				if (orderMap.containsKey(DataTablesParams.MAP_KEY_ORDER_COLUMN) && orderMap.containsKey(DataTablesParams.MAP_KEY_ORDER_DIR)) {
+					String columnStr = "";
+					String dirStr = "";
+					// column値チェック
+					if (!DataTablesParams.ORDER_COLUMN_MAP.containsKey(orderMap.get(DataTablesParams.MAP_KEY_ORDER_COLUMN))) {
+						AppLogger.warn("予期せぬ値が送られてきました。：order[column]=" + orderMap.get(DataTablesParams.MAP_KEY_ORDER_COLUMN));
+						continue;
+					} else {
+						columnStr = DataTablesParams.ORDER_COLUMN_MAP.get(orderMap.get(DataTablesParams.MAP_KEY_ORDER_COLUMN));
+					}
+					// dir値チェック
+					if (!DataTablesParams.ORDER_DIR_MAP.containsKey(orderMap.get(DataTablesParams.MAP_KEY_ORDER_DIR))) {
+						AppLogger.warn("予期せぬ値が送られてきました。：order[dir]=" + orderMap.get(DataTablesParams.MAP_KEY_ORDER_DIR));
+						continue;
+					} else {
+						dirStr = DataTablesParams.ORDER_DIR_MAP.get(orderMap.get(DataTablesParams.MAP_KEY_ORDER_DIR));
+					}
+					order.append(columnStr + " " + dirStr + ", ");
+				}
+			}
+			if (order.length() > 0) {
+				order.append("stock_code ASC");
+			}
+		}
+		if (order.length() <= 0) {
+			order.append("stock_code ASC");
+		}
+
 		// キャッシュキー
 // TODO yellow-man ClassUtils.getMethodName() がバグってる。
 //		String cacheKey = StocksComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + date + ":" + encryptStr(searchValue);
-		String cacheKey = StocksComponent.class.getName() + ":" + "getStocksListByDateCache" + ":" + date + ":" + encryptStr(searchValue) + ":" + limit + ":" + page;
+		String cacheKey = StocksComponent.class.getName() + ":" + "getStocksListByDateCache" + ":" + date + ":" + encryptStr(searchValue) + ":" + limit + ":" + page  + ":" + encryptStr(order.toString());
 
 		Object cache = null;
 		if ((cache = Cache.get(cacheKey)) != null) {
@@ -143,7 +180,7 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 						.like("stock_code", searchValue)
 						.like("stock_name", searchValue)
 					.endJunction()
-					.orderBy("stock_code ASC")
+					.orderBy(order.toString())
 					.findPagingList(limit)
 					.setFetchAhead(false)
 					.getPage(page)

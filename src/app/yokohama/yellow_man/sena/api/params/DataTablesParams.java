@@ -1,5 +1,7 @@
 package yokohama.yellow_man.sena.api.params;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +16,56 @@ public class DataTablesParams extends AppParams {
 
 	/** マップキー：search[value] */
 	public static final String MAP_KEY_SEARCH_VALUE = "value";
+	/** マップキー：search[regex] */
+	public static final String MAP_KEY_SEARCH_REGEX = "regex";
+
+	/** マップキー：order[column] */
+	public static final String MAP_KEY_ORDER_COLUMN = "column";
+	/** マップキー：order[dir] */
+	public static final String MAP_KEY_ORDER_DIR    = "dir";
+
+	/** 並び順：並び順として送られてくる値と、カラムをマッピングするMap＜String（インデックス）, String（カラム名）＞ */
+	public static final Map<String, String> ORDER_COLUMN_MAP = Collections.unmodifiableMap(new HashMap<String, String>(){
+		{
+			// ▼銘柄（stocks）
+			// 銘柄コード
+			put("0"  , "stock_code");
+			// 市場名
+			put("1"  , "market");
+
+			// ▼指標（indicators）
+			// 配当利回り（整数部：8桁、小数部：2桁）
+			put("2"  , "dividend_yield");
+			// 株価収益率（PER、整数部：8桁、小数部：2桁）
+			put("3"  , "price_earnings_ratio");
+			// 株価純資産倍率（PBR、整数部：8桁、小数部：2桁）
+			put("4"  , "price_book_value_ratio");
+			// 1株利益（EPS、整数部：8桁、小数部：2桁）
+			put("5"  , "earnings_per_share");
+			// 1株当たり純資産（BPS、整数部：8桁、小数部：2桁）
+			put("6"  , "book_value_per_share");
+			// 株主資本利益率（ROE、整数部：5桁、小数部：20桁）
+			put("7"  , "return_on_equity");
+			// 自己資本比率（整数部：8桁、小数部：2桁）
+			put("8"  , "capital_ratio");
+
+			// ▼信用残（debit_balances）
+			// 信用売残（ハイフン等、数値に変換できない場合：-1）
+			put("9"  , "margin_selling_balance");
+			// 信用買残（ハイフン等、数値に変換できない場合：-1）
+			put("10" , "margin_debt_balance");
+			// 信用倍率（整数部：8桁、小数部：2桁、ハイフン等、数値に変換できない場合：-1）
+			put("11" , "ratio_margin_balance");
+		}
+	});
+
+	/** 並び順：昇順降順して送られてくる値とマッピングする。 */
+	public static final Map<String, String> ORDER_DIR_MAP = Collections.unmodifiableMap(new HashMap<String, String>(){
+		{
+			put("asc" , "ASC");
+			put("desc", "DESC");
+		}
+	});
 
 	/**
 	 * ※翻訳サイト参照：カウンターを描く。
