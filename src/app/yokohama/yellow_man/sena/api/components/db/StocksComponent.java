@@ -1,14 +1,10 @@
 package yokohama.yellow_man.sena.api.components.db;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.Column;
 
 import com.avaje.ebean.Ebean;
 import com.avaje.ebean.RawSql;
@@ -22,10 +18,7 @@ import yokohama.yellow_man.sena.api.params.DataTablesParams;
 import yokohama.yellow_man.sena.core.components.AppLogger;
 import yokohama.yellow_man.sena.core.components.ModelUtilityComponent;
 import yokohama.yellow_man.sena.core.definitions.AppConsts;
-import yokohama.yellow_man.sena.core.models.DebitBalances;
-import yokohama.yellow_man.sena.core.models.Indicators;
 import yokohama.yellow_man.sena.core.models.Stocks;
-import yokohama.yellow_man.sena.core.models.ext.StocksWithIndicatorsDebitBalances;
 
 /**
  * 銘柄（stocks）モデルの操作を行うコンポーネントクラス。
@@ -217,7 +210,7 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 	 * @since 1.1.0-1.1
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<StocksWithIndicatorsDebitBalances> getStocksWithListByDateCache(
+	public static List<Stocks> getStocksWithListByDateCache(
 			Date date, Date indicatorsDate, Date debitBalancesDate, DataTablesParams params) {
 
 		// 検索文字列取得
@@ -286,10 +279,6 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 
 		// 銘柄クラスのカラムMapを取得する
 		Map<String, String> stocksColumnMap = ModelUtilityComponent.getColumnMap(Stocks.class);
-		// 指標クラスのカラムMapを取得する
-		Map<String, String> indicatorsColumnMap = ModelUtilityComponent.getColumnMap(Indicators.class);
-		// 信用残クラスのカラムMapを取得する
-		Map<String, String> debitBalancesColumnMap = ModelUtilityComponent.getColumnMap(DebitBalances.class);
 
 		// SQLを組み立てる
 		StringBuilder sql = new StringBuilder(" SELECT ");
@@ -300,17 +289,7 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 		}
 		select.deleteCharAt(0);
 
-//		prefix = "indicators.";
-//		for (Map.Entry<String, String> entry : indicatorsColumnMap.entrySet()) {
-//			select.append(", ").append(prefix).append(entry.getKey());
-//		}
-
-//		prefix = "debitBalances.";
-//		for (Map.Entry<String, String> entry : debitBalancesColumnMap.entrySet()) {
-//			select.append(", ").append(prefix).append(entry.getKey());
-//		}
 		sql.append(select);
-
 		sql.append(" FROM ");
 		sql.append("     stocks ");
 		sql.append("         LEFT JOIN indicators indicators ON ");
@@ -331,19 +310,9 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 			rawSqlBuilder.columnMapping(prefix + entry.getKey(), entry.getValue());
 		}
 
-//		prefix = "indicators.";
-//		for (Map.Entry<String, String> entry : indicatorsColumnMap.entrySet()) {
-//			rawSqlBuilder.columnMapping(prefix + entry.getKey(), prefix + entry.getValue());
-//		}
-
-//		prefix = "debitBalances.";
-//		for (Map.Entry<String, String> entry : debitBalancesColumnMap.entrySet()) {
-//			rawSqlBuilder.columnMapping(prefix + entry.getKey(), prefix + entry.getValue());
-//		}
-
 		RawSql rawSql = rawSqlBuilder.create();
-		List<StocksWithIndicatorsDebitBalances> retList =
-				Ebean.find(StocksWithIndicatorsDebitBalances.class)
+		List<Stocks> retList =
+				Ebean.find(Stocks.class)
 					.setRawSql(rawSql)
 					.setParameter(1, "%12%")
 					.findPagingList(10)
@@ -398,48 +367,5 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 
 		// 完了したハッシュ計算値を返却
 		return buffer.toString();
-	}
-//
-//	public static List<Test> test() {
-//		String sql = " SELECT"
-//				+ "     stocks.id"
-//				+ "     , stocks.stock_code"
-//				+ " FROM"
-//				+ "     stocks"
-//				+ " limit 10";
-//
-//		RawSql rawSql = RawSqlBuilder
-//				.unparsed(sql)
-//				.columnMapping("stocks.id", "id")
-//				.columnMapping("stocks.stocks_code", "stockCode")
-//				.create();
-//
-//		Query<Test> query = Ebean.find(Test.class);
-//		List<Test> test = query.setRawSql(rawSql).findList();
-//
-//		return test;
-//	}
-
-	public static String makeSelectColumn(Class modelClass) {
-		StringBuilder sb = new StringBuilder();
-
-		Field[] fields = modelClass.getFields();
-		for (Field field : fields) {
-			// フィールドの属性（修飾子）を取得
-			int mod = field.getModifiers();
-
-			// 静的要素は除外
-			if (Modifier.isStatic(mod)) {
-				continue;
-			}
-
-			// アノテーションを取得
-			Column annotation = field.getAnnotation(Column.class);
-			if (annotation != null) {
-				sb.append(annotation.name()).append(", ");
-			}
-		}
-
-		return sb.toString();
 	}
 }

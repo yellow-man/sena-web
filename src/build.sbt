@@ -10,10 +10,10 @@ scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
   javaJdbc,
-  "org.avaje.ebeanorm" % "avaje-ebeanorm" % "3.4.2",
+  javaEbean,
   cache,
   javaWs,
-  "org.json"           % "json"           % "20160212"
+  "org.json" % "json" % "20160212"
 )
 
 TwirlKeys.templateImports ++= Seq(
