@@ -24,9 +24,9 @@ import yokohama.yellow_man.sena.core.models.DebitBalances;
 public class DebitBalancesComponent extends yokohama.yellow_man.sena.core.components.db.DebitBalancesComponent {
 
 	/**
-	 * 信用残（debit_balances）情報公開日の最大値を返す。（※キャッシュ：1時間）
+	 * 信用残（debit_balances）情報公表日の最大値を返す。（※キャッシュ：1時間）
 	 *
-	 * @return 公開日の最大値
+	 * @return 公表日の最大値
 	 * @since 1.0.0-1.0
 	 */
 	public static Date getMaxReleaseDateCache() {

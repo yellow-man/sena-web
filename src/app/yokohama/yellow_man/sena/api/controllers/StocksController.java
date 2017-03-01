@@ -17,9 +17,7 @@ import yokohama.yellow_man.sena.api.params.DataTablesParams;
 import yokohama.yellow_man.sena.api.response.ApiResult;
 import yokohama.yellow_man.sena.api.response.StocksWithInfo;
 import yokohama.yellow_man.sena.core.components.AppLogger;
-import yokohama.yellow_man.sena.core.models.DebitBalances;
-import yokohama.yellow_man.sena.core.models.Indicators;
-import yokohama.yellow_man.sena.core.models.Stocks;
+import yokohama.yellow_man.sena.core.models.ext.StocksWithIndicatorsDebitBalances;
 import yokohama.yellow_man.sena.views.helper.AppHelper;
 
 /**
@@ -93,11 +91,19 @@ public class StocksController extends AppWebApiController {
 		Integer recordsFiltered = StocksComponent.getStocksFilterCountByDateCache(date, dataParams);
 		AppLogger.info("フィルタリング後の表示対象総数取得。：recordsFiltered=" + recordsFiltered);
 
+		// 「指標」テーブルより基準日として、登録されている「取得日」の最大値を取得する。
+		Date indicatorsDate = IndicatorsComponent.getMaxDateCache();
+		AppLogger.info("指標「取得日」取得。：date=" + DateUtils.toString(indicatorsDate, DateUtils.DATE_FORMAT_YYYY_MM_DD));
+
+		// 「信用残」テーブルより基準日として、登録されている「公表日」の最大値を取得する。
+		Date debitBalancesDate = DebitBalancesComponent.getMaxReleaseDateCache();
+		AppLogger.info("信用残「公表日」取得。：date=" + DateUtils.toString(debitBalancesDate, DateUtils.DATE_FORMAT_YYYY_MM_DD));
+
 		// 返却データ。
 		List<StocksWithInfo> dataList = null;
 
 		// 「銘柄」データを取得する。
-		List<Stocks> stocksList = StocksComponent.getStocksListByDateCache(date, dataParams);
+		List<StocksWithIndicatorsDebitBalances> stocksList = StocksComponent.getStocksWithListByDateCache(date, indicatorsDate, debitBalancesDate, dataParams);
 		if (CheckUtils.isEmpty(stocksList)) {
 			AppLogger.warn("銘柄リストが取得できませんでした。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD));
 		} else {
@@ -105,36 +111,10 @@ public class StocksController extends AppWebApiController {
 			AppLogger.info("銘柄リストが取得できました。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD)
 							+ ", stocksListSize=" + stocksListSize);
 
-			// 「指標」テーブルより基準日として、登録されている「取得日」の最大値を取得する。
-			date = IndicatorsComponent.getMaxDateCache();
-			AppLogger.info("指標「取得日」取得。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD));
-
-			// 「取得日」「銘柄コード」より、「指標」を取得する。
-			Map<Integer, Indicators> indicatorsMap = IndicatorsComponent.getIndicatorsMapByDateCache(date);
-			if (CheckUtils.isEmpty(indicatorsMap)) {
-				AppLogger.warn("指標マップが取得できませんでした。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD));
-			} else {
-				AppLogger.info("指標マップが取得できました。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD)
-								+ ", indicatorsMap.size()=" + indicatorsMap.size());
-			}
-
-			// 「信用残」テーブルより基準日として、登録されている「公開日」の最大値を取得する。
-			date = DebitBalancesComponent.getMaxReleaseDateCache();
-			AppLogger.info("信用残「公表日」取得。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD));
-
-			// 「公表日」より、全「信用残」を取得する。
-			Map<Integer, DebitBalances> debitBalancesMap = DebitBalancesComponent.getDebitBalancesMapByDateCache(date);
-			if (CheckUtils.isEmpty(debitBalancesMap)) {
-				AppLogger.warn("信用残マップが取得できませんでした。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD));
-			} else {
-				AppLogger.info("信用残マップが取得できました。：date=" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD)
-								+ ", debitBalancesMap.size()=" + debitBalancesMap.size());
-			}
-
 			// 返却データ初期化。
 			dataList = new ArrayList<StocksWithInfo>();
 			// 返却データに詰める。
-			for (Stocks stocks : stocksList) {
+			for (StocksWithIndicatorsDebitBalances stocks : stocksList) {
 				StocksWithInfo data = new StocksWithInfo();
 				Integer stockCode = stocks.stockCode;
 				// 銘柄（コード）
@@ -143,34 +123,33 @@ public class StocksController extends AppWebApiController {
 				data.market               = stocks.market;
 
 				// 該当の「指標」データを取得
-				Indicators indicators = indicatorsMap.get(stockCode);
-				if (indicators != null) {
+				if (stocks.indicators != null) {
 					// 配当利回り
-					data.dividendYield        = (indicators.dividendYield != null)       ? indicators.dividendYield.toString() + " %"        : "";
+					data.dividendYield        = (stocks.indicators.dividendYield != null)       ? stocks.indicators.dividendYield.toString() + " %"        : "";
 					// 株価収益率（PER）
-					data.priceEarningsRatio   = (indicators.priceEarningsRatio != null)  ? indicators.priceEarningsRatio.toString() + " 倍"  : "";
+					data.priceEarningsRatio   = (stocks.indicators.priceEarningsRatio != null)  ? stocks.indicators.priceEarningsRatio.toString() + " 倍"  : "";
 					// 株価純資産倍率（PBR）
-					data.priceBookValueRatio  = (indicators.priceBookValueRatio != null) ? indicators.priceBookValueRatio.toString() + " 倍" : "";
+					data.priceBookValueRatio  = (stocks.indicators.priceBookValueRatio != null) ? stocks.indicators.priceBookValueRatio.toString() + " 倍" : "";
 					// 1株利益（EPS）
-					data.earningsPerShare     = (indicators.earningsPerShare != null)    ? AppHelper.format(indicators.earningsPerShare,  AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
+					data.earningsPerShare     = (stocks.indicators.earningsPerShare != null)    ? AppHelper.format(stocks.indicators.earningsPerShare,  AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
 					// 1株当たり純資産（BPS）
-					data.bookValuePerShare    = (indicators.bookValuePerShare != null)   ? AppHelper.format(indicators.bookValuePerShare, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
+					data.bookValuePerShare    = (stocks.indicators.bookValuePerShare != null)   ? AppHelper.format(stocks.indicators.bookValuePerShare, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
 					// 株主資本利益率（ROE）
-					data.returnOnEquity       = (indicators.returnOnEquity != null)      ? AppHelper.format(indicators.returnOnEquity,    AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
+					data.returnOnEquity       = (stocks.indicators.returnOnEquity != null)      ? AppHelper.format(stocks.indicators.returnOnEquity,    AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
 					// 自己資本比率
-					data.capitalRatio         = (indicators.capitalRatio != null)        ? indicators.capitalRatio.toString() + " %"         : "";
+					data.capitalRatio         = (stocks.indicators.capitalRatio != null)        ? stocks.indicators.capitalRatio.toString() + " %"         : "";
 				}
 
 				// 該当の「信用残」データを取得
-				DebitBalances debitBalances = debitBalancesMap.get(stockCode);
-				if (debitBalances != null) {
+				if (stocks.debitBalances != null) {
 					// 信用売残
-					data.marginSellingBalance = (debitBalances.marginSellingBalance != null) ? AppHelper.format(debitBalances.marginSellingBalance, AppHelper.NUM_FORMAT_ASIGN_COMMA)       : "";
+					data.marginSellingBalance = (stocks.debitBalances.marginSellingBalance != null) ? AppHelper.format(stocks.debitBalances.marginSellingBalance, AppHelper.NUM_FORMAT_ASIGN_COMMA)       : "";
 					// 信用買残
-					data.marginDebtBalance    = (debitBalances.marginDebtBalance != null)    ? AppHelper.format(debitBalances.marginDebtBalance,    AppHelper.NUM_FORMAT_ASIGN_COMMA)       : "";
+					data.marginDebtBalance    = (stocks.debitBalances.marginDebtBalance != null)    ? AppHelper.format(stocks.debitBalances.marginDebtBalance,    AppHelper.NUM_FORMAT_ASIGN_COMMA)       : "";
 					// 信用倍率
-					data.ratioMarginBalance   = (debitBalances.ratioMarginBalance != null)   ? AppHelper.format(debitBalances.ratioMarginBalance,   AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
+					data.ratioMarginBalance   = (stocks.debitBalances.ratioMarginBalance != null)   ? AppHelper.format(stocks.debitBalances.ratioMarginBalance,   AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) : "";
 				}
+
 				dataList.add(data);
 			}
 		}
