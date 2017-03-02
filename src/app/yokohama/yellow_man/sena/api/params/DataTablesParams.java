@@ -29,33 +29,33 @@ public class DataTablesParams extends AppParams {
 		{
 			// ▼銘柄（stocks）
 			// 銘柄コード
-			put("0"  , "stock_code");
+			put("0"  , "stocks.stock_code");
 			// 市場名
-			put("1"  , "market");
+			put("1"  , "stocks.market");
 
 			// ▼指標（indicators）
 			// 配当利回り（整数部：8桁、小数部：2桁）
-			put("2"  , "dividend_yield");
+			put("2"  , "indicators.dividend_yield");
 			// 株価収益率（PER、整数部：8桁、小数部：2桁）
-			put("3"  , "price_earnings_ratio");
+			put("3"  , "indicators.price_earnings_ratio");
 			// 株価純資産倍率（PBR、整数部：8桁、小数部：2桁）
-			put("4"  , "price_book_value_ratio");
+			put("4"  , "indicators.price_book_value_ratio");
 			// 1株利益（EPS、整数部：8桁、小数部：2桁）
-			put("5"  , "earnings_per_share");
+			put("5"  , "indicators.earnings_per_share");
 			// 1株当たり純資産（BPS、整数部：8桁、小数部：2桁）
-			put("6"  , "book_value_per_share");
+			put("6"  , "indicators.book_value_per_share");
 			// 株主資本利益率（ROE、整数部：5桁、小数部：20桁）
-			put("7"  , "return_on_equity");
+			put("7"  , "indicators.return_on_equity");
 			// 自己資本比率（整数部：8桁、小数部：2桁）
-			put("8"  , "capital_ratio");
+			put("8"  , "indicators.capital_ratio");
 
 			// ▼信用残（debit_balances）
 			// 信用売残（ハイフン等、数値に変換できない場合：-1）
-			put("9"  , "margin_selling_balance");
+			put("9"  , "debitBalances.margin_selling_balance");
 			// 信用買残（ハイフン等、数値に変換できない場合：-1）
-			put("10" , "margin_debt_balance");
+			put("10" , "debitBalances.margin_debt_balance");
 			// 信用倍率（整数部：8桁、小数部：2桁、ハイフン等、数値に変換できない場合：-1）
-			put("11" , "ratio_margin_balance");
+			put("11" , "debitBalances.ratio_margin_balance");
 		}
 	});
 

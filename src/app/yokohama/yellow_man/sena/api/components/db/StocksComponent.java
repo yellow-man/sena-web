@@ -257,11 +257,11 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 				}
 			}
 			if (order.length() > 0) {
-				order.append("stock_code ASC");
+				order.append("stocks.stock_code ASC");
 			}
 		}
 		if (order.length() <= 0) {
-			order.append("stock_code ASC");
+			order.append("stocks.stock_code ASC");
 		}
 
 		// キャッシュキー
@@ -300,8 +300,11 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 		sql.append("             AND debitBalances.release_date = '" + DateUtils.toString(debitBalancesDate, DateUtils.DATE_FORMAT_YYYY_MM_DD) + "' ");
 		sql.append(" WHERE ");
 		sql.append("     stocks.date = '" + DateUtils.toString(date, DateUtils.DATE_FORMAT_YYYY_MM_DD) + "' ");
-		sql.append("     AND stocks.stock_code like ? ");
-		sql.append(" ORDER BY stocks.stock_code asc, debitBalances.release_date");
+		sql.append("     AND (stocks.stock_code like ? OR stocks.stock_name like ?) ");
+		sql.append(" ORDER BY ");
+		sql.append(order);
+		sql.append(" LIMIT ? ");
+		sql.append(" OFFSET ? ");
 
 		// RawSqlBuilderを組み立てる
 		RawSqlBuilder rawSqlBuilder = RawSqlBuilder.unparsed(sql.toString());
@@ -314,11 +317,11 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 		List<Stocks> retList =
 				Ebean.find(Stocks.class)
 					.setRawSql(rawSql)
-					.setParameter(1, "%12%")
-					.findPagingList(10)
-					.setFetchAhead(false)
-					.getPage(0)
-					.getList();
+					.setParameter(1, searchValue)
+					.setParameter(2, searchValue)
+					.setParameter(3, limit)
+					.setParameter(4, page * limit)
+					.findList();
 
 		// 取得データをキャッシュに保持
 		if (retList != null) {
