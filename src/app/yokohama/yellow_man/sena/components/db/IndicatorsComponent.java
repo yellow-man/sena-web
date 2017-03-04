@@ -10,6 +10,7 @@ import play.cache.Cache;
 import yokohama.yellow_man.common_tools.CheckUtils;
 import yokohama.yellow_man.common_tools.ClassUtils;
 import yokohama.yellow_man.common_tools.DateUtils;
+import yokohama.yellow_man.common_tools.StringUtils;
 import yokohama.yellow_man.sena.core.definitions.AppConsts;
 import yokohama.yellow_man.sena.core.models.Indicators;
 
@@ -19,6 +20,7 @@ import yokohama.yellow_man.sena.core.models.Indicators;
  *
  * @author yellow-man
  * @since 1.0.0-1.0
+ * @version 1.1.0-1.1
  * @see yokohama.yellow_man.sena.core.components.db.IndicatorsComponent
  */
 public class IndicatorsComponent extends yokohama.yellow_man.sena.core.components.db.IndicatorsComponent {
@@ -74,7 +76,7 @@ public class IndicatorsComponent extends yokohama.yellow_man.sena.core.component
 	@SuppressWarnings("unchecked")
 	public static Map<Integer, Indicators> getIndicatorsMapByDateCache(Date date) {
 		// キャッシュキー
-		String cacheKey = IndicatorsComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + date;
+		String cacheKey = IndicatorsComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + StringUtils.encryptStr(date.toString());
 
 		Object cache = null;
 		if ((cache = Cache.get(cacheKey)) != null) {

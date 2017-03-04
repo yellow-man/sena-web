@@ -1,19 +1,20 @@
 package yokohama.yellow_man.sena.api.components.db;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Query;
 import com.avaje.ebean.RawSql;
 import com.avaje.ebean.RawSqlBuilder;
 import com.avaje.ebean.SqlRow;
 
 import play.cache.Cache;
 import yokohama.yellow_man.common_tools.CheckUtils;
+import yokohama.yellow_man.common_tools.ClassUtils;
 import yokohama.yellow_man.common_tools.DateUtils;
+import yokohama.yellow_man.common_tools.StringUtils;
 import yokohama.yellow_man.sena.api.params.DataTablesParams;
 import yokohama.yellow_man.sena.core.components.AppLogger;
 import yokohama.yellow_man.sena.core.components.ModelUtilityComponent;
@@ -40,12 +41,12 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 	 */
 	public static int getStocksTotalCountByDateCache(Date date) {
 		// キャッシュキー
-// TODO yellow-man ClassUtils.getMethodName() がバグってる。
-//		String cacheKey = StocksComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + date;
-		String cacheKey = StocksComponent.class.getName() + ":" + "getStocksTotalCountByDateCache" + ":" + date;
+		String cacheKey = StocksComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + StringUtils.encryptStr(date.toString());
 
 		Object cache = null;
 		if ((cache = Cache.get(cacheKey)) != null) {
+			AppLogger.debug("キャッシュデータを返却します。：cacheKey=" + cacheKey);
+
 			// キャッシュが存在する場合は、キャッシュからデータを取得する。
 			return (int) cache;
 		}
@@ -74,12 +75,12 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 		}
 
 		// キャッシュキー
-// TODO yellow-man ClassUtils.getMethodName() がバグってる。
-//		String cacheKey = StocksComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + date + ":" + encryptStr(searchValue);
-		String cacheKey = StocksComponent.class.getName() + ":" + "getStocksFilterCountByDateCache" + ":" + date + ":" + encryptStr(searchValue);
+		String cacheKey = StocksComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + StringUtils.encryptStr(date.toString() + ":" + searchValue);
 
 		Object cache = null;
 		if ((cache = Cache.get(cacheKey)) != null) {
+			AppLogger.debug("キャッシュデータを返却します。：cacheKey=" + cacheKey);
+
 			// キャッシュが存在する場合は、キャッシュからデータを取得する。
 			return (int) cache;
 		}
@@ -100,105 +101,6 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 	}
 
 	/**
-	 * TODO yellow-man JOINしないと並び順は対応できない。
-	 * 検索条件に取得日（{@code date}）とDataTablesパラメータ（{@code params}）を指定し、
-	 * 未削除の銘柄（stocks）情報一覧を返す。（※キャッシュ：1時間）
-	 *
-	 * @param date 取得日
-	 * @param params DataTablesパラメータ
-	 * @return 未削除の銘柄（stocks）情報一覧
-	 * @since 1.1.0-1.1
-	 */
-	@SuppressWarnings("unchecked")
-	public static List<Stocks> getStocksListByDateCache(Date date, DataTablesParams params) {
-		// 検索文字列取得
-		String searchValue = "";
-		if (params.search != null && params.search.containsKey(DataTablesParams.MAP_KEY_SEARCH_VALUE)) {
-			searchValue = params.search.get(DataTablesParams.MAP_KEY_SEARCH_VALUE);
-		}
-
-		// 取得件数
-		int limit = 10;
-		if (params.length != null) {
-			limit = params.length;
-		}
-
-		// ページ
-		int page = 0;
-		if (params.start != null) {
-			page = params.start / limit;
-		}
-
-		// 並び順
-		StringBuilder order = new StringBuilder();
-		if (!CheckUtils.isEmpty(params.order)) {
-			for (Map<String, String> orderMap : params.order) {
-				// 必要なキーが存在しているかチェック
-				if (orderMap.containsKey(DataTablesParams.MAP_KEY_ORDER_COLUMN) && orderMap.containsKey(DataTablesParams.MAP_KEY_ORDER_DIR)) {
-					String columnStr = "";
-					String dirStr = "";
-					// column値チェック
-					if (!DataTablesParams.ORDER_COLUMN_MAP.containsKey(orderMap.get(DataTablesParams.MAP_KEY_ORDER_COLUMN))) {
-						AppLogger.warn("予期せぬ値が送られてきました。：order[column]=" + orderMap.get(DataTablesParams.MAP_KEY_ORDER_COLUMN));
-						continue;
-					} else {
-						columnStr = DataTablesParams.ORDER_COLUMN_MAP.get(orderMap.get(DataTablesParams.MAP_KEY_ORDER_COLUMN));
-					}
-					// dir値チェック
-					if (!DataTablesParams.ORDER_DIR_MAP.containsKey(orderMap.get(DataTablesParams.MAP_KEY_ORDER_DIR))) {
-						AppLogger.warn("予期せぬ値が送られてきました。：order[dir]=" + orderMap.get(DataTablesParams.MAP_KEY_ORDER_DIR));
-						continue;
-					} else {
-						dirStr = DataTablesParams.ORDER_DIR_MAP.get(orderMap.get(DataTablesParams.MAP_KEY_ORDER_DIR));
-					}
-					order.append(columnStr + " " + dirStr + ", ");
-				}
-			}
-			if (order.length() > 0) {
-				order.append("stock_code ASC");
-			}
-		}
-		if (order.length() <= 0) {
-			order.append("stock_code ASC");
-		}
-
-		// キャッシュキー
-// TODO yellow-man ClassUtils.getMethodName() がバグってる。
-//		String cacheKey = StocksComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + date + ":" + encryptStr(searchValue);
-		String cacheKey = StocksComponent.class.getName() + ":" + "getStocksListByDateCache" + ":" + date + ":" + encryptStr(searchValue) + ":" + limit + ":" + page  + ":" + encryptStr(order.toString());
-
-		Object cache = null;
-		if ((cache = Cache.get(cacheKey)) != null) {
-			// キャッシュが存在する場合は、キャッシュからデータを取得する。
-			return (List<Stocks>) cache;
-		}
-
-		searchValue = "%" + searchValue + "%";
-
-		List<Stocks> retList =
-				Ebean.find(Stocks.class)
-					.where()
-					.eq("delete_flg", false)
-					.eq("date", date)
-					.disjunction()
-						.like("stock_code", searchValue)
-						.like("stock_name", searchValue)
-					.endJunction()
-					.orderBy(order.toString())
-					.findPagingList(limit)
-					.setFetchAhead(false)
-					.getPage(page)
-					.getList();
-
-		// 取得データをキャッシュに保持
-		if (retList != null) {
-			Cache.set(cacheKey, retList, AppConsts.CACHE_TIME_LONG);
-		}
-		return retList;
-	}
-
-	/**
-	 * TODO yellow-man JOINしないと並び順は対応できない。
 	 * 検索条件に取得日（{@code date}）とDataTablesパラメータ（{@code params}）を指定し、
 	 * 未削除の銘柄（stocks）情報一覧を返す。（※キャッシュ：1時間）
 	 *
@@ -265,15 +167,16 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 		}
 
 		// キャッシュキー
-// TODO yellow-man ClassUtils.getMethodName() がバグってる。
-//		String cacheKey = StocksComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":" + date + ":" + encryptStr(searchValue);
-		String cacheKey = StocksComponent.class.getName() + ":" + "getStocksListByDateCache" + ":" + date + ":" + encryptStr(searchValue) + ":" + limit + ":" + page  + ":" + encryptStr(order.toString());
+		String cacheKey = StocksComponent.class.getName() + ":" + ClassUtils.getMethodName() + ":"
+							+ StringUtils.encryptStr(date + ":" + searchValue + ":" + limit + ":" + page  + ":" + StringUtils.encryptStr(order.toString()));
 
 		Object cache = null;
-//		if ((cache = Cache.get(cacheKey)) != null) {
-//			// キャッシュが存在する場合は、キャッシュからデータを取得する。
-//			return (List<StocksWithIndicatorsDebitBalances>) cache;
-//		}
+		if ((cache = Cache.get(cacheKey)) != null) {
+			AppLogger.debug("キャッシュデータを返却します。：cacheKey=" + cacheKey);
+
+			// キャッシュが存在する場合は、キャッシュからデータを取得する。
+			return (List<Stocks>) cache;
+		}
 
 		searchValue = "%" + searchValue + "%";
 
@@ -303,8 +206,11 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 		sql.append("     AND (stocks.stock_code like ? OR stocks.stock_name like ?) ");
 		sql.append(" ORDER BY ");
 		sql.append(order);
-		sql.append(" LIMIT ? ");
-		sql.append(" OFFSET ? ");
+		// マイナスは全件検索
+		if (limit >= 0) {
+			sql.append(" LIMIT ? ");
+			sql.append(" OFFSET ? ");
+		}
 
 		// RawSqlBuilderを組み立てる
 		RawSqlBuilder rawSqlBuilder = RawSqlBuilder.unparsed(sql.toString());
@@ -312,63 +218,22 @@ public class StocksComponent extends yokohama.yellow_man.sena.components.db.Stoc
 		for (Map.Entry<String, String> entry : stocksColumnMap.entrySet()) {
 			rawSqlBuilder.columnMapping(prefix + entry.getKey(), entry.getValue());
 		}
-
 		RawSql rawSql = rawSqlBuilder.create();
-		List<Stocks> retList =
-				Ebean.find(Stocks.class)
-					.setRawSql(rawSql)
-					.setParameter(1, searchValue)
-					.setParameter(2, searchValue)
-					.setParameter(3, limit)
-					.setParameter(4, page * limit)
-					.findList();
+
+		Query<Stocks> query = Ebean.find(Stocks.class).setRawSql(rawSql);
+		query.setParameter(1, searchValue)
+				.setParameter(2, searchValue);
+		// マイナスは全件検索
+		if (limit >= 0) {
+			query.setParameter(3, limit)
+				.setParameter(4, page * limit);
+		}
+		List<Stocks> retList = query.findList();
 
 		// 取得データをキャッシュに保持
 		if (retList != null) {
 			Cache.set(cacheKey, retList, AppConsts.CACHE_TIME_LONG);
 		}
 		return retList;
-	}
-
-	/**
-	 * TODO yellow-man とりあえず一旦privateメソッドで。common-tools 移動予定。
-	* @param text ハッシュ化するテキスト。
-	* @return ハッシュ化した計算値(16進数)。
-	*/
-	private static String encryptStr(String text) {
-		// 変数初期化
-		MessageDigest md = null;
-		StringBuffer buffer = new StringBuffer();
-
-		try {
-			// メッセージダイジェストインスタンス取得
-			md = MessageDigest.getInstance("SHA-256");
-		} catch (NoSuchAlgorithmException e) {
-			// 例外発生時、エラーメッセージ出力
-			System.out.println("指定された暗号化アルゴリズムがありません。");
-		}
-
-		// メッセージダイジェスト更新
-		md.update(text.getBytes());
-
-		// ハッシュ値を格納
-		byte[] valueArray = md.digest();
-
-		// ハッシュ値の配列をループ
-		for(int i = 0; i < valueArray.length; i++){
-			// 値の符号を反転させ、16進数に変換
-			String tmpStr = Integer.toHexString(valueArray[i] & 0xff);
-
-			if(tmpStr.length() == 1){
-				// 値が一桁だった場合、先頭に0を追加し、バッファに追加
-				buffer.append('0').append(tmpStr);
-			} else {
-				// その他の場合、バッファに追加
-				buffer.append(tmpStr);
-			}
-		}
-
-		// 完了したハッシュ計算値を返却
-		return buffer.toString();
 	}
 }

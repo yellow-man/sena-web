@@ -102,7 +102,7 @@ public class StocksController extends AppWebApiController {
 		AppLogger.info("信用残「公表日」取得。：date=" + DateUtils.toString(debitBalancesDate, DateUtils.DATE_FORMAT_YYYY_MM_DD));
 
 		// 返却データ。
-		List<StocksWithInfo> dataList = null;
+		List<StocksWithInfo> dataList = new ArrayList<StocksWithInfo>();
 
 		// 「銘柄」データを取得する。
 		List<Stocks> stocksList = StocksComponent.getStocksWithListByDateCache(date, indicatorsDate, debitBalancesDate, dataParams);
@@ -131,8 +131,6 @@ public class StocksController extends AppWebApiController {
 								+ ", debitBalancesMap.size()=" + debitBalancesMap.size());
 			}
 
-			// 返却データ初期化。
-			dataList = new ArrayList<StocksWithInfo>();
 			// 返却データに詰める。
 			for (Stocks stocks : stocksList) {
 				StocksWithInfo data = new StocksWithInfo();

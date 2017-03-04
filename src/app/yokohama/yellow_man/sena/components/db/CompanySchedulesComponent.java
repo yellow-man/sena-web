@@ -12,6 +12,7 @@ import yokohama.yellow_man.sena.core.models.ext.CompanySchedulesWithStocks;
  *
  * @author yellow-man
  * @since 1.0.0-1.0
+ * @version 1.1.0-1.1
  * @see yokohama.yellow_man.sena.core.components.db.CompanySchedulesComponent
  */
 public class CompanySchedulesComponent extends yokohama.yellow_man.sena.core.components.db.CompanySchedulesComponent {

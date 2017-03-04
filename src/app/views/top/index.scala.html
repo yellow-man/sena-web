@@ -62,88 +62,6 @@
                                             <th>信用倍率</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @for(stocks <- topIndexPage.stocks){
-                                        <tr>
-                                            @* 銘柄（コード） *@
-                                            <td>@stocks.stockCode @stocks.stockName</td>
-                                            @* 市場名 *@
-                                            <td align="center">@stocks.market</td>
-
-                                            @defining(topIndexPage.indicatorsMap.get(stocks.stockCode)){ indicators =>
-                                                @* 配当利回り *@
-                                                <td align="right">
-                                                    @if(indicators != null && indicators.dividendYield != null){
-                                                        @indicators.dividendYield %
-                                                    }
-                                                </td>
-                                                @* 株価収益率（PER） *@
-                                                <td align="right">
-                                                    @if(indicators != null && indicators.priceEarningsRatio != null){
-                                                        @indicators.priceEarningsRatio 倍
-                                                    }
-                                                </td>
-                                                @* 株価純資産倍率（PBR） *@
-                                                <td align="right">
-                                                    @if(indicators != null && indicators.priceBookValueRatio != null){
-                                                        @indicators.priceBookValueRatio 倍
-                                                    }
-                                                </td>
-                                                @* 1株利益（EPS） *@
-                                                <td align="right">
-                                                    @if(indicators != null && indicators.earningsPerShare != null){
-                                                        @* カンマ、少数点、マイナス *@
-                                                        @AppHelper.format(indicators.earningsPerShare, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT)
-                                                    }
-                                                </td>
-                                                @* 1株当たり純資産（BPS） *@
-                                                <td align="right">
-                                                    @if(indicators != null && indicators.bookValuePerShare != null){
-                                                        @* カンマ、少数点、マイナス *@
-                                                        @AppHelper.format(indicators.bookValuePerShare, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT)
-                                                    }
-                                                </td>
-                                                @* 株主資本利益率（ROE） *@
-                                                <td align="right">
-                                                    @if(indicators != null && indicators.returnOnEquity != null){
-                                                        @* カンマ、少数点 *@
-                                                        @AppHelper.format(indicators.returnOnEquity, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT)
-                                                    }
-                                                </td>
-                                                @* 自己資本比率 *@
-                                                <td align="right">
-                                                    @if(indicators != null){
-                                                        @indicators.capitalRatio
-                                                    }
-                                                </td>
-                                            }
-
-                                            @defining(topIndexPage.debitBalancesMap.get(stocks.stockCode)){ debitBalances =>
-                                                @* 信用売残 *@
-                                                <td align="right">
-                                                    @if(debitBalances != null && debitBalances.marginSellingBalance != null){
-                                                        @* カンマ *@
-                                                        @AppHelper.format(debitBalances.marginSellingBalance, AppHelper.NUM_FORMAT_ASIGN_COMMA)
-                                                    }
-                                                </td>
-                                                @* 信用買残 *@
-                                                <td align="right">
-                                                    @if(debitBalances != null && debitBalances.marginDebtBalance != null){
-                                                        @* カンマ *@
-                                                        @AppHelper.format(debitBalances.marginDebtBalance, AppHelper.NUM_FORMAT_ASIGN_COMMA)
-                                                    }
-                                                </td>
-                                                @* 信用倍率 *@
-                                                <td align="right">
-                                                    @if(debitBalances != null && debitBalances.ratioMarginBalance != null){
-                                                        @* カンマ、少数点 *@
-                                                        @AppHelper.format(debitBalances.ratioMarginBalance, AppHelper.NUM_FORMAT_ASIGN_COMMA_POINT) 倍
-                                                    }
-                                                </td>
-                                            }
-                                        </tr>
-                                        }
-                                    </tbody>
                                 </table>
                             </div>
                             <!-- /.panel-body -->
@@ -175,16 +93,45 @@
     $(document).ready(function() {
         $('#dataTables').DataTable({
             "responsive":    true,
+            "processing":    true,
+            "serverSide":    true,
             "paging":        true,
             "ordering":      true,
             "displayLength": 10,
             "order":         [[ 0, "asc" ]],
-            "pagingType":     "full_numbers",
             "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "すべて"]],
             "language": {
-                "url": "http://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json"
+                "url": "/json/datatables/Japanese.json"
             },
+            "ajax": {
+                "url": "/1.1.0-1.1/api/getStocksWithInfoList.json",
+                "data": function(data) {
+                    planify(data);
+                }
+            },
+            "columns": [
+                { "data": "stockCodeName" },
+                { "data": "market" },
+                { "data": "dividendYield" },
+                { "data": "priceEarningsRatio" },
+                { "data": "priceBookValueRatio" },
+                { "data": "earningsPerShare" },
+                { "data": "bookValuePerShare" },
+                { "data": "returnOnEquity" },
+                { "data": "capitalRatio" },
+                { "data": "marginSellingBalance" },
+                { "data": "marginDebtBalance" },
+                { "data": "ratioMarginBalance" }
+            ]
         });
+        function planify(data) {
+            for (var i = 0; i < data.columns.length; i++) {
+                column = data.columns[i];
+                column.searchRegex = column.search.regex;
+                column.searchValue = column.search.value;
+                delete(column.search);
+            }
+        }
     });
     </script>
 </body>

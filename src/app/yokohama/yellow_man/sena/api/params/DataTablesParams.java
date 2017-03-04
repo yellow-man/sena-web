@@ -110,7 +110,7 @@ public class DataTablesParams extends AppParams {
 	public List<Map<String, String>> order;
 
 	/**
-	 * TODO yellow-man 初段では使わない想定。
+	 * TODO yellow-man 1.1.0-1.1では使わない想定。
 	 * <p>※翻訳サイト参照：
 	 * <ul>
 	 *     <li>columns[i][data] （integer）
