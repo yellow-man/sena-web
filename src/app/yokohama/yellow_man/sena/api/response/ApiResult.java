@@ -75,6 +75,7 @@ public class ApiResult {
 	/**
 	 * エラーコンテンツをセットする。
 	 * @param errorsAsJson json形式のエラーメッセージ
+	 * @param message エラーメッセージ
 	 * @since 1.1.0-1.1
 	 */
 	public void setErrors(JsonNode errorsAsJson, String message) {

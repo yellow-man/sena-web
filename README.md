@@ -13,6 +13,7 @@ Play Framework 2.3ベースのWebアプリケーションです。
 
 ## ドキュメント（Document）
 
+* [Sena-web（1.1.0-1.1） アプリケーション API仕様](https://yellow-man.github.io/sena-doc/javadoc/web/1.1.0-1.1/)
 * [Sena-web（1.0.0-1.0） アプリケーション API仕様](https://yellow-man.github.io/sena-doc/javadoc/web/1.0.0-1.0/)
 
 
