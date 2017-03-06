@@ -28,6 +28,7 @@ import yokohama.yellow_man.sena.views.helper.AppHelper;
  *
  * @author yellow-man
  * @since 1.1.0-1.1
+ * @version 1.2.0-1.1
  */
 public class StocksController extends AppWebApiController {
 
@@ -89,10 +90,6 @@ public class StocksController extends AppWebApiController {
 		int recordsTotal = StocksComponent.getStocksTotalCountByDateCache(date);
 		AppLogger.info("表示対象の総数取得。：recordsTotal=" + recordsTotal);
 
-		// フィルタリング後の表示対象総数を取得する。
-		Integer recordsFiltered = StocksComponent.getStocksFilterCountByDateCache(date, dataParams);
-		AppLogger.info("フィルタリング後の表示対象総数取得。：recordsFiltered=" + recordsFiltered);
-
 		// 「指標」テーブルより基準日として、登録されている「取得日」の最大値を取得する。
 		Date indicatorsDate = IndicatorsComponent.getMaxDateCache();
 		AppLogger.info("指標「取得日」取得。：date=" + DateUtils.toString(indicatorsDate, DateUtils.DATE_FORMAT_YYYY_MM_DD));
@@ -100,6 +97,10 @@ public class StocksController extends AppWebApiController {
 		// 「信用残」テーブルより基準日として、登録されている「公表日」の最大値を取得する。
 		Date debitBalancesDate = DebitBalancesComponent.getMaxReleaseDateCache();
 		AppLogger.info("信用残「公表日」取得。：date=" + DateUtils.toString(debitBalancesDate, DateUtils.DATE_FORMAT_YYYY_MM_DD));
+
+		// フィルタリング後の表示対象総数を取得する。
+		Integer recordsFiltered = StocksComponent.getStocksFilterCountByDateCache(date, indicatorsDate, debitBalancesDate, dataParams);
+		AppLogger.info("フィルタリング後の表示対象総数取得。：recordsFiltered=" + recordsFiltered);
 
 		// 返却データ。
 		List<StocksWithInfo> dataList = new ArrayList<StocksWithInfo>();

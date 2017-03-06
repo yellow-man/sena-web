@@ -1,6 +1,6 @@
 name := """sena-web"""
 
-version := "1.1.0-1.1"
+version := "1.2.0-1.1"
 
 lazy val core = (project in file("modules/sena-core/src")).enablePlugins(PlayJava).settings(javacOptions in (Compile,doc) += "-Xdoclit:none")
 

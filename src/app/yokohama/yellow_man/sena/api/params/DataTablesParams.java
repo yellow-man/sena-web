@@ -10,6 +10,7 @@ import java.util.Map;
  *
  * @author yellow-man
  * @since 1.1.0-1.1
+ * @version 1.2.0-1.1
  * @see <a href="https://datatables.net/manual/server-side">Server-side processing https://datatables.net/manual/server-side</a>
  */
 public class DataTablesParams extends AppParams {
@@ -128,4 +129,19 @@ public class DataTablesParams extends AppParams {
 	 * </ul>
 	 */
 	public List<Map<String, String>> columns;
+
+	/**
+	 * このクラスを複製する。
+	 * @since 1.2.0-1.1
+	 */
+	public DataTablesParams clone() {
+		DataTablesParams clone = new DataTablesParams();
+		clone.draw    = this.draw;
+		clone.start   = this.start;
+		clone.length  = this.length;
+		clone.search  = this.search;
+		clone.order   = this.order;
+		clone.columns = this.columns;
+		return clone;
+	}
 }
